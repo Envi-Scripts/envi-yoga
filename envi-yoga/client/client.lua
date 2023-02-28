@@ -105,3 +105,15 @@ RegisterNetEvent('envi-yoga:pickup', function(entity)
     RemoveAnimDict('amb@medic@standing@kneel@base')
     RemoveAnimDict('anim@gangops@facility@servers@bodysearch@')
 end)
+
+RegisterNetEvent('envi-yoga:lotusflower',function()
+    TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_YOGA', 0, true)
+	Wait(35000)
+    -- ADD YOUR CUSTOM STRESS TRIGGER HERE -- 
+
+    if Config.Framework == 'qb' then
+	    TriggerServerEvent('hud:server:RelieveStress', math.random(25,60))
+    end
+	Wait(5000)
+	ClearPedTasks(ped)
+end)
