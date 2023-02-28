@@ -107,6 +107,7 @@ RegisterNetEvent('envi-yoga:pickup', function(entity)
 end)
 
 RegisterNetEvent('envi-yoga:lotusflower',function()
+	local ped = PlayerPedId()
     TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_YOGA', 0, true)
 	Wait(35000)
     -- ADD YOUR CUSTOM STRESS TRIGGER HERE -- 
