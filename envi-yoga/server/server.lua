@@ -1,6 +1,5 @@
 if Config.Framework == 'esx' then    
-    ESX = nil
-    TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+    ESX = exports["es_extended"]:getSharedObject()
 
     for k, v in pairs(Config.YogaMats) do
         ESX.RegisterUsableItem(k, function(source)
@@ -13,9 +12,9 @@ elseif Config.Framework == 'qb' then
     local QBCore = exports['qb-core']:GetCoreObject()
     for k, v in pairs(Config.YogaMats) do
         QBCore.Functions.CreateUseableItem(k, function(source, item)
-            local Player = QBCore.Functions.GetPlayer(source)
+            local player = QBCore.Functions.GetPlayer(source)
             TriggerClientEvent('envi-yoga:placemat', source, item, v)
-            Player.Functions.RemoveItem(item, 1)
+            player.Functions.RemoveItem(item, 1)
         end)
     end
 end
@@ -29,12 +28,13 @@ local function GetItemFromModel(model)
 end
 
 RegisterNetEvent('envi-yoga:pickup', function(model)
+    -- this could probablyy use some validation
     local item = GetItemFromModel(model)
     if Config.Framework == 'esx' then
         local xPlayer = ESX.GetPlayerFromId(source)
         xPlayer.addInventoryItem(item, 1)
     elseif Config.Framework == 'qb' then
-        local Player = QBCore.Functions.GetPlayer(source)
-        Player.Functions.AddItem(item, 1)
+        local player = QBCore.Functions.GetPlayer(source)
+        player.Functions.AddItem(item, 1)
     end
 end)
