@@ -1,3 +1,4 @@
+local doingYoga = false
 local function LoadAnimDict(dict)
     while not HasAnimDictLoaded(dict) do
         RequestAnimDict(dict)
@@ -11,8 +12,6 @@ for k, v in pairs(Config.YogaMats) do
 end
 
 RegisterNetEvent('envi-yoga:placemat', function(item, model)
-
-
     local ped = PlayerPedId()
     local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, -0.85))
     RequestModel(model)
@@ -28,6 +27,7 @@ RegisterNetEvent('envi-yoga:placemat', function(item, model)
     local yogaMat = CreateObjectNoOffset(model, x, y, z, true, false)
     SetModelAsNoLongerNeeded(model)
     PlaceObjectOnGroundProperly(yogaMat)
+    SetEntityAsMissionEntity(yogaMat, false, true)
     RemoveAnimDict('amb@medic@standing@kneel@base')
     RemoveAnimDict('anim@gangops@facility@servers@bodysearch@')
 end)
@@ -40,12 +40,24 @@ if Config.Target == 'qtarget' then
                 label = "Pick Up",
                 action = function(entity)
                     TriggerEvent('envi-yoga:pickup', entity)
+                end,
+                canInteract = function()
+                    if IsEntityAMissionEntity(entity) then
+                        return true
+                    end
+                    return false
                 end
             },
             {
                 event = 'envi-yoga:lotusflower',
                 icon = "fa-solid fa-lungs",
-                label = "Lotus Flower"
+                label = "Lotus Flower",
+                canInteract = function(entity)
+                    if not doingYoga then
+                        return true
+                    end
+                    return false
+                end,
             },
         },
         distance = 1.0,
@@ -56,6 +68,12 @@ elseif Config.Target == 'ox_target' then
             event = 'envi-yoga:lotusflower',
             icon = "fa-solid fa-lungs",
             label = "Lotus Flower",
+            canInteract = function(entity)
+                if not doingYoga then
+                    return true
+                end
+                return false
+            end,
             distance = 1.5
         },
         {
@@ -63,6 +81,12 @@ elseif Config.Target == 'ox_target' then
             label = "Pick Up",
             onSelect = function(data)
                 TriggerEvent('envi-yoga:pickup', data.entity)
+            end,
+            canInteract = function(entity)
+                if not doingYoga and IsEntityAMissionEntity(entity) then
+                    return true
+                end
+                return false
             end,
             distance = 1.3
 
@@ -76,12 +100,24 @@ elseif Config.Target == 'qb-target' then
                 label = "Pick Up",
                 action = function(entity)
                     TriggerEvent('envi-yoga:pickup', entity)
-                end
+                end,
+                canInteract = function(entity)
+                    if IsEntityAMissionEntity(entity) then
+                        return true
+                    end
+                    return false
+                end,
             },
             {
                 event = 'envi-yoga:lotusflower',
                 icon = "fa-solid fa-lungs",
-                label = "Lotus Flower"
+                label = "Lotus Flower",
+                canInteract = function(entity)
+                    if not doingYoga then
+                        return true
+                    end
+                    return false
+                end,
             },
         },
         distance = 1.0,
@@ -101,13 +137,16 @@ RegisterNetEvent('envi-yoga:pickup', function(entity)
     Wait(5000)
     ClearPedTasks(ped)
     TriggerServerEvent('envi-yoga:pickup', GetEntityModel(entity))
+    SetEntityAsMissionEntity(yogaMat, false, false)
+    SetEntityAsNoLongerNeeded(yogaMat)
     DeleteEntity(entity)
     RemoveAnimDict('amb@medic@standing@kneel@base')
     RemoveAnimDict('anim@gangops@facility@servers@bodysearch@')
 end)
 
 RegisterNetEvent('envi-yoga:lotusflower',function()
-	local ped = PlayerPedId()
+    local ped = PlayerPedId()
+    doingYoga = true
     TaskStartScenarioInPlace(ped, 'WORLD_HUMAN_YOGA', 0, true)
 	Wait(35000)
     -- ADD YOUR CUSTOM STRESS TRIGGER HERE -- 
@@ -117,4 +156,5 @@ RegisterNetEvent('envi-yoga:lotusflower',function()
     end
 	Wait(5000)
 	ClearPedTasks(ped)
+    doingYoga = false
 end)
