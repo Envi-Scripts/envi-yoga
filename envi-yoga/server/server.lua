@@ -14,7 +14,7 @@ elseif Config.Framework == 'qb' then
         QBCore.Functions.CreateUseableItem(k, function(source, item)
             local player = QBCore.Functions.GetPlayer(source)
             TriggerClientEvent('envi-yoga:placemat', source, item, v)
-            player.Functions.RemoveItem(item, 1)
+            player.Functions.RemoveItem(item.name, 1)
         end)
     end
 end
@@ -28,13 +28,15 @@ local function GetItemFromModel(model)
 end
 
 RegisterNetEvent('envi-yoga:pickup', function(model)
-    -- this could probablyy use some validation
-    local item = GetItemFromModel(model)
-    if Config.Framework == 'esx' then
-        local xPlayer = ESX.GetPlayerFromId(source)
-        xPlayer.addInventoryItem(item, 1)
-    elseif Config.Framework == 'qb' then
-        local player = QBCore.Functions.GetPlayer(source)
-        player.Functions.AddItem(item, 1)
+    if model then
+        local item = GetItemFromModel(model)
+        if Config.Framework == 'esx' then
+            local xPlayer = ESX.GetPlayerFromId(source)
+            xPlayer.addInventoryItem(item, 1)
+        elseif Config.Framework == 'qb' then
+            local QBCore = exports['qb-core']:GetCoreObject()
+            local player = QBCore.Functions.GetPlayer(source)
+            player.Functions.AddItem(item, 1)
+        end
     end
 end)
