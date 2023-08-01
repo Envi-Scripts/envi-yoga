@@ -13,7 +13,7 @@ end
 
 RegisterNetEvent('envi-yoga:placemat', function(item, model)
     local ped = PlayerPedId()
-    local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, -0.85))
+    local x, y, z = table.unpack(GetOffsetFromEntityInWorldCoords(ped, 0.0, 1.0, 0))
     RequestModel(model)
     while not HasModelLoaded(model) do
         Wait(0)
@@ -24,7 +24,7 @@ RegisterNetEvent('envi-yoga:placemat', function(item, model)
     TaskPlayAnim(ped, "anim@gangops@facility@servers@bodysearch@", "player_search", 8.0, -8.0, -1, 48, 0, false, false, false)
     Wait(2500)
     ClearPedTasks(ped)
-    local yogaMat = CreateObjectNoOffset(model, x, y, z, true, false)
+    local yogaMat = CreateObjectNoOffset(model, x, y, z + 1.5, true, false)
     SetModelAsNoLongerNeeded(model)
     PlaceObjectOnGroundProperly(yogaMat)
     SetEntityAsMissionEntity(yogaMat, false, true)
@@ -105,7 +105,7 @@ elseif Config.Target == 'qb-target' then
                     if IsEntityAMissionEntity(entity) then
                         return true
                     end
-                    return false
+                    return true
                 end,
             },
             {
@@ -120,7 +120,7 @@ elseif Config.Target == 'qb-target' then
                 end,
             },
         },
-        distance = 1.0,
+        distance = 1.8,
     }) 
 end
 
