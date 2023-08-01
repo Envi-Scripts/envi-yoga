@@ -1,6 +1,8 @@
 
 fx_version 'cerulean'
 
+author 'Envi-Scripts'
+version '1.3.0'
 game 'gta5'
 
 client_scripts {
